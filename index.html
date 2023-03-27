@@ -74,9 +74,13 @@
         const signatureData = decodedData.substring(0, signatureIndex - 1);
         const parsedData = JSON.parse(decodedData);
         const signatureValue = parsedData.signature;
+        const uidValue = `01${parsedData.card.UID}`;
+
+        const cmacKey = CryptoJS.CMAC(CryptoJS.enc.Hex.parse(keyValueInput), CryptoJS.enc.Hex.parse(uidValue));
+        const cmacKeyHex = cmacKey.toString(CryptoJS.enc.Hex);
 
         // calculate AES-CMAC using signatureData and keyValueInput
-        const aesCmac = CryptoJS.CMAC(CryptoJS.enc.Hex.parse(keyValueInput), signatureData);
+        const aesCmac = CryptoJS.CMAC(cmacKey, signatureData);
 
         // convert AES-CMAC to hexadecimal format
         const aesCmacHex = aesCmac.toString(CryptoJS.enc.Hex);
